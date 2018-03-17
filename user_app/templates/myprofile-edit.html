@@ -1,0 +1,25 @@
+{% extends 'index.html' %}
+
+{% block title %}- My Profile{% endblock %}
+
+{% block content %}
+    <div>
+        <form action="." method="post">{% csrf_token %}
+            First Name : <input name="first_name" value="{{ user.first_name }}"><br>
+            Last Name  : <input name="last_name" value="{{ user.last_name }}"><br>
+
+            Gender     : <select name="gender">
+                            <option value="male" {% if custom_usr.gender == 'male' %}selected{% endif %}>Male</option>
+                            <option value="female" {% if custom_usr.gender == 'female' %}selected{% endif %}>Female</option>
+                         </select>
+                         <br>
+            Mobile     : <input name="mobile" value="{{ custom_usr.mobile }}"><br>
+            Date of Birth: <input name="dob" value="{{ custom_usr.dob|date:'d/m/Y' }}" placeholder="DD/MM/YYYY"><br>
+            City       : <input name="city" value="{{ custom_usr.city|default:'' }}"><br>
+            County     : <input name="country" value="{{ custom_usr.country|default:'' }}"><br>
+
+            <br>
+            <button type="submit">Update</button>
+        </form>
+    </div>
+{% endblock %}

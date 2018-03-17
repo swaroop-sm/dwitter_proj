@@ -1,0 +1,28 @@
+{% extends "index.html" %}
+
+{% block title %}- Sign Up{% endblock %}
+
+
+{% block content %}
+    <div>
+        {% if success %}
+            <h2>Signed Up successfully.</h2>
+            <br>
+            <a href="{% url 'signin-url' %}"><button type="submit">SIGNIN</button></a>
+        {% else %}
+            <h2>Signup to Dwitter.</h2>
+            {% include 'errors.html' %}
+            
+            <form method="post" action = ".">{% csrf_token %}
+                {% for field in form %}
+                <label>{{ field.label_tag }}</label>
+                    {{ field }}
+                <br>
+                {% endfor %}
+                <button type="submit">SIGNUP</button>
+            </form>
+
+            <a href="{% url 'signin-url' %}"><button type="submit">Go to SIGNIN</button></a>
+        {% endif %}
+    </div>
+{% endblock %}

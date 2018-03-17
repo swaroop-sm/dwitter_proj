@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dwitter{% block title %} {% endblock %}</title>
+</head>
+
+<style>
+.content{
+    width: 760px;
+    margin: 0 auto;
+}
+.lhs {
+    width: 500px;
+    margin: auto;
+    border-right: 1px #ccc solid;
+    border-left : 1px #ccc solid;
+    height: 100%;
+    padding: 10px;
+    float: left;
+}
+
+.rhs{
+    width: 200px;
+    float: left;
+    padding: 0px 10px 0px 10px;
+}
+</style>
+
+<body>
+    <div class="content">
+        <div class="lhs">
+            {% block content %}
+                {% if request.user.is_authenticated %}
+                    {% for tweet in tweets %}
+                        {{ tweet.tweet }}
+                    {% endfor %}
+                {% else %}
+                    <h2>Welcome to Dwitter</h2>
+                    
+                    Create an Account here. <a href="{% url 'signup-url' %}"><button type="submit">SIGNUP</button></a>
+                    <br>
+                    Already have an account ? <a href="{% url 'signin-url' %}"><button type="submit">SIGNIN</button></a>
+                {% endif %}
+            {% endblock %}
+        </div>
+
+        <div class="rhs">
+            {% if request.user.is_authenticated %}
+                {{ request.user.get_full_name }}
+                <ul>
+                    <li><a href="{% url 'myprofile-url' %}">My Profile</a></li>
+                    <li><a href="{% url 'auth:logout' %}?next=/">Log out</a></li>
+                </ul>
+            {% endif %}
+        </div>
+    </div>
+</body>
+
+</html>
