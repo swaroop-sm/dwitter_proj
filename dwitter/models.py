@@ -11,7 +11,17 @@ class Tweet(BaseModel):
     tweet = models.TextField("Tweet")
     tweet_by = models.ForeignKey(CustomUser)
 
+    def __unicode__(self):
+        return "%s | %s" %(self.tweet[:10], self.tweet_by.user.username)
 
+    def no_of_likes(self):
+        return self.tweetlikes_set.filter(active = 2).count()
+
+    def user_has_liked(self, cuser):
+        if self.tweetlikes_set.filter(active = 2, liked_by = cuser).exists():
+            return True
+        else:
+            return False
 
 class TweetLikes(BaseModel):
 

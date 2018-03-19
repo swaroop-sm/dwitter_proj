@@ -33,4 +33,5 @@ class LoginForm(forms.Form):
                     error_messages = {'required': "Please enter Username"})
     
     password = forms.CharField(label = "Password",
+                    widget = forms.PasswordInput(),
                     error_messages = {'required': "Please enter a Password"})
