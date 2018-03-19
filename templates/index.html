@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>Dwitter{% block title %} {% endblock %}</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
 </head>
 
 <style>
@@ -30,9 +31,17 @@
     <div class="content">
         <div class="lhs">
             {% block content %}
+            {% load dwitter_tags %}
                 {% if request.user.is_authenticated %}
                     {% for tweet in tweets %}
-                        {{ tweet.tweet }}
+                        <p>{{ tweet.tweet }}</p>
+
+                        {% url 'like-tweet-json-url' tweet.id as like_tweet_json_url %}
+                        {% url 'unlike-tweet-json-url' tweet.id as unlike_tweet_json_url %}
+                        {% like_or_unlike tweet request.user as like_unlike %}
+                        
+                        <span class="nooflk-{{ forloop.counter }}">{{ tweet.no_of_likes|default:0 }}</span> likes | {% if like_unlike == 'Like' %}<a data-click="{{ like_tweet_json_url }}" data-index-id="{{ forloop.counter }}" class="lkunlk">{{ like_unlike }}</a> {% else %}<a data-click="{{ unlike_tweet_json_url }}" data-index-id="{{ forloop.counter }}" class="lkunlk">{{ like_unlike }}</a> {% endif %}
+                        <hr>
                     {% endfor %}
                 {% else %}
                     <h2>Welcome to Dwitter</h2>
@@ -48,12 +57,44 @@
             {% if request.user.is_authenticated %}
                 {{ request.user.get_full_name }}
                 <ul>
+                    <li><a href="{% url 'home-url' %}">Home</a></li>
                     <li><a href="{% url 'myprofile-url' %}">My Profile</a></li>
+                    <li><a href="{% url 'mytweets-url' %}">My Tweets</a></li>
+                    <li><a href="{% url 'add-tweet-url' %}">Add a Tweet</a></li>
                     <li><a href="{% url 'auth:logout' %}?next=/">Log out</a></li>
                 </ul>
             {% endif %}
         </div>
     </div>
 </body>
+<script>
+    $(document).ready(function() {
+        $(".lkunlk").click(function(e) {
+            
+            var parent = this;
+            var id = $(parent).attr('data-index-id');
+            e.preventDefault(); // stops reloading page..
+
+            $.ajax({
+              url: $(parent).attr('data-click'),
+              type: 'get',
+              dataType: 'json',
+              async: false,
+              success: function(res){
+                  if (res.success){
+                      $('.nooflk-'+id).html(res.no_of_likes);
+                      $(parent).html(res.new_txt);
+                      $(parent).attr('data-click', res.new_url);
+                  } else {
+                      alert(res.msg);
+                  }  
+              },
+              error: function(req, stat, err){
+                  alert('Something went wrong. Please try again.');
+              }
+            });
+        })
+    });
+</script>
 
 </html>

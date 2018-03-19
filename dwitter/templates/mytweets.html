@@ -1,0 +1,22 @@
+{% extends 'index.html' %}
+
+{% block title %}- My Tweets{% endblock %}
+
+{% block content %}
+    <style>
+        div p {
+            display: block;
+            border: 1px #ccc solid;
+            padding: 10px;
+        }
+    </style>
+    <div>
+        My Tweets<br><br>
+        {% for tweet in tweets %}
+            <p>{{ tweet.tweet }}</p>
+            {{ tweet.no_of_likes|default:0 }} likes
+            <a href="{% url 'edit-tweet-url' tweet.id %}"><button type="submit" style='float:right'>Edit</button></a>
+            <br><br><hr>
+        {% endfor %}
+    </div>
+{% endblock %}

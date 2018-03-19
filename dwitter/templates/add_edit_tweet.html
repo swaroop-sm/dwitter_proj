@@ -1,0 +1,15 @@
+{% extends 'index.html' %}
+
+{% block title %}- Add Tweet{% endblock %}
+
+{% block content %}
+    <div>
+        <p>{% if new_tweet %} Add a tweet about something that matters. {% else %} You are editing an existing tweet to something that matters {% endif %}  
+        </p>
+        <form method="post", action='.'>{% csrf_token %}
+            <textarea rows="10" cols="65" name="tweet_txt" required>{% if not new_tweet %}{{ tweetObj.tweet }}{% endif %}</textarea>
+
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+{% endblock %}
