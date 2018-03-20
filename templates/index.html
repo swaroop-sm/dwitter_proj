@@ -33,14 +33,36 @@
             {% block content %}
             {% load dwitter_tags %}
                 {% if request.user.is_authenticated %}
+                  <form method="post" action='.'>{% csrf_token %}
+                    <input type="text" name="query" style="width:480px;" placeholder="Search for Tweet, Email or Name">
+                  </form>
+                  <br>
                     {% for tweet in tweets %}
+                        <span>{{ tweet.tweet_by.user.get_full_name }}
+
+                        {% can_user_follow request.user tweet.tweet_by as can_follow %}
+
+                        {% if can_follow %}
+                            {% url 'follow-user-json-url' tweet.tweet_by.id as follow_user_json_url %}
+                            {% url 'unfollow-user-json-url' tweet.tweet_by.id as unfollow_user_json_url %}
+                            {% follow_or_unfollow request.user tweet.tweet_by as follow_unfollow %}
+
+                            
+                            <a {% if follow_unfollow == 'Follow' %} href="{{ follow_user_json_url }}" {% else %} href="{{ unfollow_user_json_url }}" {% endif %}><button class='flwunflw' type="button" style="float:right;">{{ follow_unfollow }}</button></a>
+                        </span>    
+                        {% endif %}
+
                         <p>{{ tweet.tweet }}</p>
+
+                        <span style="font-size:12px;">{{ tweet.created_at|date:'d N Y - H:i' }}</span>
+                        <br><br>
 
                         {% url 'like-tweet-json-url' tweet.id as like_tweet_json_url %}
                         {% url 'unlike-tweet-json-url' tweet.id as unlike_tweet_json_url %}
                         {% like_or_unlike tweet request.user as like_unlike %}
                         
                         <span class="nooflk-{{ forloop.counter }}">{{ tweet.no_of_likes|default:0 }}</span> likes | {% if like_unlike == 'Like' %}<a data-click="{{ like_tweet_json_url }}" data-index-id="{{ forloop.counter }}" class="lkunlk">{{ like_unlike }}</a> {% else %}<a data-click="{{ unlike_tweet_json_url }}" data-index-id="{{ forloop.counter }}" class="lkunlk">{{ like_unlike }}</a> {% endif %}
+                        
                         <hr>
                     {% endfor %}
                 {% else %}
@@ -70,11 +92,10 @@
 <script>
     $(document).ready(function() {
         $(".lkunlk").click(function(e) {
-            
+            e.preventDefault(); // stops reloading page..
             var parent = this;
             var id = $(parent).attr('data-index-id');
-            e.preventDefault(); // stops reloading page..
-
+            
             $.ajax({
               url: $(parent).attr('data-click'),
               type: 'get',
@@ -95,6 +116,62 @@
             });
         })
     });
+</script>
+
+<script>
+    $(document).ready(function() {
+        $(".flwunflw").click(function(e) {
+            e.preventDefault(); // stops reloading page..
+            var parent = this;
+            
+            $.ajax({
+              url: $(parent).parent().attr('href'),
+              type: 'get',
+              dataType: 'json',
+              async: false,
+              success: function(res){
+                  if (res.success){
+                      // $(parent).text(res.new_txt);
+                      // $(parent).parent().attr('href', res.new_url);
+                      location.reload()
+                  } else {
+                      alert(res.msg);
+                  }  
+              },
+              error: function(req, stat, err){
+                  alert('Something went wrong. Please try again.');
+                  alert(err);
+              }
+            });
+        })
+    });
+</script>
+
+<script>
+  // $(document).ready(function() {
+  //       $(".flwunflw").click(function(e) {
+  //           e.preventDefault(); // stops reloading page..
+  //           var parent = this;
+            
+  //           $.ajax({
+  //             url: $(parent).parent().attr('href'),
+  //             type: 'get',
+  //             dataType: 'json',
+  //             async: false,
+  //             success: function(res){
+  //                 if (res.success){
+  //                     $(".fllwunfllw").load(' .fllwunfllw');
+  //                 } else {
+  //                     alert(res.msg);
+  //                 }  
+  //             },
+  //             error: function(req, stat, err){
+  //                 alert('Something went wrong. Please try again.');
+  //                 alert(err);
+  //             }
+  //           });
+  //       })
+  //   });
 </script>
 
 </html>

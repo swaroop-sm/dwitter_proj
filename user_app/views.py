@@ -85,7 +85,7 @@ class LoginView(View, CSRFExemptMixin, CustomForm):
 
 
 class UserView(LoginRequiredMixin, View, BaseView, CSRFExemptMixin):
-    login_url = '/signin/'
+    login_url = '/u/signin/'
 
     def myprofile(self, request, *args, **kwargs):
         user = request.user
