@@ -19,5 +19,17 @@ urlpatterns = [
             name = 'like-tweet-json-url'),
 
     url(r'^tweet/unlike-tweet/(?P<tid>[0-9]+)/$', TweetLikeView.as_view(action = "unliketweet"),
-            name = 'unlike-tweet-json-url'),    
+            name = 'unlike-tweet-json-url'),
+
+    url(r'^follow-user/(?P<cuid>[0-9]+)/$', FollowUserView.as_view(action = "follow_user"),
+            name = 'follow-user-json-url'),
+
+    url(r'^unfollow-user/(?P<cuid>[0-9]+)/$', FollowUserView.as_view(action = "unfollow_user"),
+            name = 'unfollow-user-json-url'),
+
+    url(r'^user-tweets/(?P<uid>[0-9]+)/$', ResultDetailView.as_view(action = "user_tweets"),
+            name = "user-tweets-url"),
+
+    url(r'^tweet/(?P<tid>[0-9]+)/$', ResultDetailView.as_view(action = "tweet"),
+            name = "tweet-url"),
 ]

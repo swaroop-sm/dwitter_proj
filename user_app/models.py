@@ -17,6 +17,23 @@ class CustomUser(BaseModel):
                     blank = True, null = True)
     gender = models.CharField("Gender", max_length = 10,
                     choices = GENDER_CHOICES, default = ' ')
+    bio = models.TextField("User bio", blank = True, null = True)
+
 
     def __unicode__(self):
         return "%s | %s" %(self.user.get_full_name(), self.user.username)
+
+
+    def is_following(self):
+        if self.following_user.filter(active = 2).exists():
+            return True
+        else:
+            return False
+
+
+    def users_following(self):
+        if self.is_following():
+            flwuobjs = self.following_user.filter(active = 2)
+            return [i.followed for i in flwuobjs]
+        else:
+            return CustomUser.objects.all()

@@ -11,12 +11,17 @@
         }
     </style>
     <div>
-        My Tweets<br><br>
+        <h2>My Tweets</h2>
+        <br><br>
         {% for tweet in tweets %}
             <p>{{ tweet.tweet }}</p>
+            <span style="font-size:12px;">{{ tweet.created_at|date:'d N Y - H:i' }}</span>
+            <br><br>
             {{ tweet.no_of_likes|default:0 }} likes
             <a href="{% url 'edit-tweet-url' tweet.id %}"><button type="submit" style='float:right'>Edit</button></a>
             <br><br><hr>
+        {% empty %}
+            <h4>You have not added any tweets.</h4>
         {% endfor %}
     </div>
 {% endblock %}

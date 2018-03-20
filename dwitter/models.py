@@ -28,3 +28,15 @@ class TweetLikes(BaseModel):
     liked = models.ForeignKey(Tweet)
     liked_by = models.ForeignKey(CustomUser)
 
+
+class FollowUser(BaseModel):
+
+    """ Two fields. following_user field specifies the user who is following someone.
+    followed field specifies the user who is being followed by user field """
+
+    following_user = models.ForeignKey(CustomUser, related_name = "following_user")
+    followed = models.ForeignKey(CustomUser, related_name = "followed")
+
+    def __unicode__(self):
+        return '%s following %s' %(self.following_user.user.username, self.followed.user.username)
+
